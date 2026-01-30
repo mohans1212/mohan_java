@@ -5,6 +5,11 @@ pipeline{
         maven 'mymaven'
     }
 
+    environment {
+       DOCKER_HUB = "mohancloud12/myapp"
+       REGISTRY_CREDENTIALS = "dockerpass"
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -16,14 +21,22 @@ pipeline{
                 sh 'mvn clean package'
             }
         }
-        stage('Test') {
+        stage('Build Docker Image') {
             steps {
-                echo 'Testing...'
+                script{
+                    IMAGE_TAGE = "${DOCKER_HUB}:${BUILD_NUMBER}"
+                    sh "docker build -t ${IMAGE_TAGE} ."
+                    env.IMAGE_TAGE = IMAGE_TAGE
+                }
             }
         }
-        stage('Deploy') {
+        stage('Push Docker Image') {
             steps {
-                echo 'Deploying...'
+                script{
+                    docker.withRegistry('', "${REGISTRY_CREDENTIALS}"){
+                        sh "docker push ${env.IMAGE_TAGE}"
+                    }
+                }
             }
         }
     }
