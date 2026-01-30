@@ -8,13 +8,12 @@ pipeline{
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/mohans1212/mohan_java.git
+                git branch: 'main', url: 'https://github.com/mohans1212/mohan_java.git'
             }
         }
-
         stage('Build') {
             steps {
-                sh "mvn clean package"
+                sh 'mvn clean package'
             }
         }
         stage('Test') {
