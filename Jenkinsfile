@@ -36,8 +36,8 @@ pipeline{
                             withCredentials([usernamePassword(credentialsId: REGISTRY_CREDENTIALS, usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
                             sh '''
                                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                                docker push ${IMAGE_TAG}
-                                docker image rm ${IMAGE_TAG} || true
+                                docker push ${IMAGE_TAGE}
+                                docker image rm ${IMAGE_TAGE} || true
                                 docker logout
                             '''
                             }
