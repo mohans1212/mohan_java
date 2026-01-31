@@ -46,8 +46,10 @@ pipeline{
         stage('Update file') {
             steps {
                 sh '''
+                    git clone https://github.com/mohans1212/config-repo.git
+                    cd config-repo
                     yq e ".spec.template.spec.containers[0].image = \\"${IMAGE_TAGE}\\"" -i app/deployment.yml
-                    cat kubernetes/deployment.yml
+                    cat app/deployment.yml
                 '''
             }
         }
@@ -65,7 +67,7 @@ pipeline{
                       git config user.email "jenkins@ci"
 
                       git add app/deployment.yml
-                      git commit -m "test" || echo "No changes to commit"
+                      git commit -m "label update for build ${IMAGE_TAGE}" || echo "No changes to commit"
 
                       git push https://${GIT_USER}:${GIT_PASS}@github.com/mohans1212/config-repo.git main
                     '''
@@ -76,4 +78,5 @@ pipeline{
     }
 
 }
+
 
