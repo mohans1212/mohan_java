@@ -48,6 +48,7 @@ pipeline{
                 sh '''
                     git clone https://github.com/mohans1212/config-repo.git || true
                     cd config-repo
+                    git pull || true
                     yq e ".spec.template.spec.containers[0].image = \\"${IMAGE_TAGE}\\"" -i app/deployment.yml
                     cat app/deployment.yml
                 '''
@@ -79,6 +80,7 @@ pipeline{
     }
 
 }
+
 
 
 
