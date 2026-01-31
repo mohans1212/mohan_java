@@ -65,7 +65,7 @@ pipeline{
                     sh '''
                       git config user.name "jenkins"
                       git config user.email "jenkins@ci"
-
+                      pwd
                       git add app/deployment.yml
                       git commit -m "label update for build ${IMAGE_TAGE}" || echo "No changes to commit"
 
@@ -78,5 +78,6 @@ pipeline{
     }
 
 }
+
 
 
