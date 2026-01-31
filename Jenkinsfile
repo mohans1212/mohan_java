@@ -45,12 +45,15 @@ pipeline{
         }
         stage('Update file') {
             steps {
+                dir('config-repo') {
+                    deleteDir()   // removes old copy completely
+                    git branch: 'main',
+                        url: 'https://github.com/mohans1212/config-repo.git'
+                }
+        
                 sh '''
-                    git clone https://github.com/mohans1212/config-repo.git || true
-                    cd config-repo
-                    git pull || true
-                    yq e ".spec.template.spec.containers[0].image = \\"${IMAGE_TAGE}\\"" -i app/deployment.yml
-                    cat app/deployment.yml
+                  yq e ".spec.template.spec.containers[0].image = \\"${IMAGE_TAGE}\\"" -i config-repo/app/deployment.yml
+                  cat config-repo/app/deployment.yml
                 '''
             }
         }
@@ -80,6 +83,7 @@ pipeline{
     }
 
 }
+
 
 
 
