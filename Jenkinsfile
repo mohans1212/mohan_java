@@ -46,9 +46,7 @@ pipeline{
         stage('Update file') {
             steps {
                 sh '''
-
-                    IMAGE="mohancloud12/myapp:${BUILD_TAG}"
-                    yq e ".spec.template.spec.containers[0].image = \\"${IMAGE}\\"" -i app/deployment.yml
+                    yq e ".spec.template.spec.containers[0].image = \\"${IMAGE_TAGE}\\"" -i app/deployment.yml
                     cat kubernetes/deployment.yml
                 '''
             }
@@ -78,3 +76,4 @@ pipeline{
     }
 
 }
+
