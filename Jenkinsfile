@@ -37,12 +37,44 @@ pipeline{
                             sh '''
                                 echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                                 docker push ${IMAGE_TAGE}
-                                docker image rm ${IMAGE_TAGE} || true
                                 docker logout
                             '''
                             }
                 }
             }
         }
+        stage('Update file') {
+            steps {
+                sh '''
+
+                    IMAGE="mohancloud12/myapp:${BUILD_TAG}"
+                    yq e ".spec.template.spec.containers[0].image = \\"${IMAGE}\\"" -i app/deployment.yml
+                    cat kubernetes/deployment.yml
+                '''
+            }
+        }
+        stage('Commit and Push Changes') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'gitpass',
+                        usernameVariable: 'GIT_USER',
+                        passwordVariable: 'GIT_PASS'
+                    )
+                ]) {
+                    sh '''
+                      git config user.name "jenkins"
+                      git config user.email "jenkins@ci"
+
+                      git add app/deployment.yml
+                      git commit -m "test" || echo "No changes to commit"
+
+                      git push https://${GIT_USER}:${GIT_PASS}@github.com/mohans1212/config-repo.git main
+                    '''
+            }
+         
+          }
+        }
     }
+
 }
